@@ -41,12 +41,8 @@ import operator
 from joblib import Parallel, delayed
 import joblib
 import scipy.sparse
-
 # set page
 st.set_page_config(page_title="E-commerce", page_icon=":money_with_wings:")
-
-
-
 
 
 # import thư viện Content Base
@@ -54,7 +50,8 @@ st.set_page_config(page_title="E-commerce", page_icon=":money_with_wings:")
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
-    
+
+               
 
 
 # function popularity collaborative fillering:
@@ -116,28 +113,29 @@ class popularity_based_recommender_model():
 
 
   
-# upload data
-uploaded_files = st.sidebar.file_uploader("Choose a CSV file", accept_multiple_files=True)
-for file in uploaded_files:
-    if file.name=="consine_similarity.npy" :
-        result=np.load(file)
+#load model similarity
+
+result=np.load("consine_similarity.npy")
         
-    elif file.name=="newdata.csv" :
-        data=pd.read_csv(file)
-    elif file.name=="reviewdata.csv" :
-        data2=pd.read_csv(file)
-        data2=data2[['userId','productId','Rating']]
-        from sklearn.model_selection import train_test_split
-        train_data, test_data = train_test_split(data2, test_size =.20, random_state=10)
+# load data item
+data=pd.read_csv("newdata.csv")
+   
+# load data review
+data2=pd.read_csv("reviewdata.csv")
+# read column
+data2=data2[['userId','productId','Rating']]
 
-        pr = popularity_based_recommender_model(train_data=train_data, test_data=test_data, user_id='userId', item_id='productId')
-        pr.fit()
+# read matrix
+from sklearn.model_selection import train_test_split
+train_data, test_data = train_test_split(data2, test_size =.20, random_state=10)
+pr = popularity_based_recommender_model(train_data=train_data, test_data=test_data, user_id='userId', item_id='productId')
+pr.fit()
 
-    elif file.name=="knnmodel.pkl":
-        knn_from_joblib = joblib.load(file)   
+# read model knn
+knn_from_joblib = joblib.load("knnmodel.pkl")   
     
-    elif file.name=="sparse_matrix.npz":
-        csr_matrix =  scipy.sparse.load_npz(file)
+# read ma trix
+csr_matrix =  scipy.sparse.load_npz("sparse_matrix.npz")
         
 
 # def list products for collaborative filtering        
@@ -181,25 +179,14 @@ if choice == "Home":
     with st.container():
         st.subheader("Manual of Experience Recommended Items")
      
-        st.write("### 1. Upload File")
-        st.image("ManualUploadfile.gif")
-        st.write("##### Data1:")
-        st.write("https://drive.google.com/file/d/1gKtQQ-enhWMhrkcaCWBaahk6bkfUm5oE/view?usp=share_link")     
-        st.write("##### Data2:")
-        st.write("https://drive.google.com/file/d/1m8b3yNZCo_fDARW_QDOYibQozPXmzDdT/view?usp=share_link")     
-        st.write("##### Data3:")
-        st.write("https://drive.google.com/file/d/1k4KulF0z7PZhf5hJXgffZ_AO2CmZwxwN/view?usp=share_link")  
-        st.write("##### Data4:")
-        st.write("https://drive.google.com/file/d/1UF5yCPnLP5ee8r2RpkEu8doZ9K86CjQL/view?usp=share_link")  
-        st.write("##### Data5:")
-        st.write("https://drive.google.com/file/d/1__EXk5W4GH18YCO9231UD8IbVbZcbV6I/view?usp=share_link")   
        
-        st.write("### 2. Select Category")
-        st.write("##### 2.1 Personalized item_Content Based")
+       
+        st.write("### 1. Select Category")
+        st.write("##### 1.1 Personalized item_Content Based")
         st.image("SelectCategory.gif")
 
         
-        st.write("##### 2.2 Reference Recommended Item_Popular Collaborative Filtering")
+        st.write("##### 1.2 Reference Recommended Item_Popular Collaborative Filtering")
         st.image("InputID.gif")
 
         
